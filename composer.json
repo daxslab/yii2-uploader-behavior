@@ -1,5 +1,5 @@
 {
-    "name": "daxslab/yii2-upload-behavior",
+    "name": "daxslab/yii2-uploader-behavior",
     "description": "Yii2 Uploader Behavior for Active Record",
     "type": "yii2-extension",
     "keywords": ["yii2","extension"],
