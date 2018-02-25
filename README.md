@@ -1,7 +1,6 @@
 Yii2 Uploader Behavior for Active Record
 ========================================
-UploaderBehavior automates file uploading and configures the way that filename should be renamed and stored in database
-as attribute value.
+Yii2 Uploader Behavior for Active Record that automates file uploading for every attribute tagged with `file` or `image` validation rule. It also configures the way that filename should be renamed and stored in database as attribute value.
 
 Installation
 ------------

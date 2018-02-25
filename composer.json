@@ -1,6 +1,6 @@
 {
     "name": "daxslab/yii2-uploader-behavior",
-    "description": "Yii2 Uploader Behavior for Active Record",
+    "description": "Yii2 Uploader Behavior for Active Record that automates file uploading for every attribute tagged with `file` or `image` validation rule. It also configures the way that filename should be renamed and stored in database as attribute value.",
     "type": "yii2-extension",
     "keywords": ["yii2","extension"],
     "license": "GPL-2.0",
@@ -15,7 +15,7 @@
     },
     "autoload": {
         "psr-4": {
-            "daxslab\\behaviors\\uploader\\": ""
+            "daxslab\\behaviors\\": ""
         }
     }
 }

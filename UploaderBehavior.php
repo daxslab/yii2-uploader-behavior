@@ -2,7 +2,7 @@
 
 /**
  * @link http://www.daxslab.com/
- * @copyright Copyright (c) 2016 Yii Software LLC
+ * @copyright Copyright (c) 2016 Daxslab
  * @license http://www.yiiframework.com/license/
  */
 
@@ -19,8 +19,8 @@ use yii\helpers\Inflector;
 use yii\web\UploadedFile;
 
 /**
- * UploaderBehavior automates file uploading and configures the way that filename should be renamed and stored in database
- * as attribute value. For a basic usage:
+ *  UploaderBehavior automates file uploading for every attribute tagged with `file` or `image` validation rule. 
+ *  It also configures the way that filename should be renamed and stored in database as attribute value. For a basic usage:
  *
  * ```php
  * use daxslab\behaviors\UploaderBehavior;
@@ -56,6 +56,7 @@ use yii\web\UploadedFile;
  * will uploads the files and converts its filenames to uppercase;
  *
  * @author Gabriel A. López López <glpz@daxslab.com>
+ * @since 2.0.14
  */
 class UploaderBehavior extends Behavior {
 
