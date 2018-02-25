@@ -39,8 +39,7 @@ public function behaviors() {
 
 ```
 
-This is the simplest way of usage. It will look for all attributes with a `file` or `image` validation rule
-and upload the file specified with an `ActiveField::fileInput()` field.
+This is the simplest way of usage. It will look for all attributes with a `file` or `image` validation rule.
 
 ```php
 public function rules()
@@ -54,7 +53,14 @@ public function rules()
 
 ```
 
-Or you can specify which attributes to control using the `attributes` option as in  :
+And update the form to specify a file input for the image attribute:
+
+```php
+$form->field($model, 'image')->fileInput(); 
+
+```
+
+For a more controlled usage, you can specify which attributes to control using the `attributes` option as in  :
 
 ```php
 

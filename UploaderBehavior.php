@@ -2,7 +2,7 @@
 
 /**
  * @link http://www.daxslab.com/
- * @copyright Copyright (c) 2016 Daxslab
+ * @copyright Copyright (c) 2018 Daxslab
  * @license http://www.yiiframework.com/license/
  */
 
