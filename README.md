@@ -1,6 +1,6 @@
 Yii2 Uploader Behavior for Active Record
 ========================================
-Yii2 Uploader Behavior for Active Record that automates file uploading for every attribute tagged with `file` or `image` validation rule. It also configures the way that filename should be renamed and stored in database as attribute value.
+Automates file uploading for every attribute tagged with `file` or `image` validation rule. It also configures the way that filename should be renamed and stored in database as attribute value.
 
 Installation
 ------------
@@ -28,7 +28,6 @@ Usage
 Once the extension is installed, simply use it in your models by  :
 
 ```php
-
 use daxslab/behaviors/UploaderBehavior;
 
 public function behaviors() {
@@ -36,7 +35,6 @@ public function behaviors() {
         UploaderBehavior::className()
     ];
 }
-
 ```
 
 This is the simplest way of usage. It will look for all attributes with a `file` or `image` validation rule.
@@ -50,20 +48,17 @@ public function rules()
         [['image'], 'image', 'skipOnEmpty' => true],
     ];
 }
-
 ```
 
 And update the form to specify a file input for the image attribute:
 
 ```php
-$form->field($model, 'image')->fileInput(); 
-
+$form->field($model, 'image')->fileInput();
 ```
 
 For a more controlled usage, you can specify which attributes to control using the `attributes` option as in  :
 
 ```php
-
 use daxslab/behaviors/UploaderBehavior;
 
 public function behaviors() {
@@ -74,14 +69,12 @@ public function behaviors() {
         ]
     ];
 }
-
 ```
 
 By default the filename of the uploaded file is randomized, but if you want to configure it you can setup the `renamer`
 option:
 
 ```php
-
 use daxslab/behaviors/UploaderBehavior;
 
 public function behaviors() {
@@ -93,13 +86,11 @@ public function behaviors() {
         ]
     ];
 }
-
 ```
 
 also you can specify a custom function to rename the filename:
 
 ```php
-
 use daxslab/behaviors/UploaderBehavior;
 
 public function behaviors() {
@@ -113,5 +104,6 @@ public function behaviors() {
         ]
     ];
 }
-
 ```
+
+Proudly made by [Daxslab](http://daxslab.com).
