@@ -1,5 +1,12 @@
 Yii2 Uploader Behavior for Active Record
 ========================================
+
+[![Build Status](https://secure.travis-ci.org/daxslab/yii2-uploader-behavior.png)](http://travis-ci.org/daxslab/yii2-uploader-behavior)
+[![Latest Stable Version](https://poser.pugx.org/daxslab/yii2-uploader-behavior/v/stable.svg)](https://packagist.org/packages/daxslab/yii2-uploader-behavior)
+[![Total Downloads](https://poser.pugx.org/daxslab/yii2-uploader-behavior/downloads)](https://packagist.org/packages/daxslab/yii2-uploader-behavior)
+[![Latest Unstable Version](https://poser.pugx.org/daxslab/yii2-uploader-behavior/v/unstable.svg)](https://packagist.org/packages/daxslab/yii2-uploader-behavior)
+[![License](https://poser.pugx.org/daxslab/yii2-uploader-behavior/license.svg)](https://packagist.org/packages/daxslab/yii2-uploader-behavior)
+
 Automates file uploading for every attribute tagged with `file` or `image` validation rule. It also configures the way that filename should be renamed and stored in database as attribute value.
 
 Installation
