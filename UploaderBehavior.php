@@ -131,14 +131,18 @@ class UploaderBehavior extends Behavior {
      * Checks for a valid configuration
      */
     public function init() {
-        if (!(in_array($this->renamer, [
+        if(!(is_int($this->renamer) || is_callable($this->renamer))){
+            throw new InvalidConfigException('The `renamer` option must be a callable or a valid UploaderBehavior::RENAME_* constant');
+        }
+
+        if (is_int($this->renamer) and !(in_array($this->renamer, [
                 self::RENAME_NO_RENAME,
                 self::RENAME_MD5,
                 self::RENAME_SHA1,
                 self::RENAME_SLUG,
                 self::RENAME_RANDOM
-            ]) || is_callable($this->renamer))) {
-            throw new InvalidConfigException('The "renamer" option must be a callable or a valid UploaderBehavior::RENAME_* constant');
+            ]))) {
+            throw new InvalidConfigException('The `renamer` option must be a valid UploaderBehavior::RENAME_* constant');
         }
     }
 
