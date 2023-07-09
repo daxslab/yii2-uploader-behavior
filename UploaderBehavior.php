@@ -19,7 +19,7 @@ use yii\helpers\Inflector;
 use yii\web\UploadedFile;
 
 /**
- *  UploaderBehavior automates file uploading for every attribute tagged with `file` or `image` validation rule. 
+ *  UploaderBehavior automates file uploading for every attribute tagged with `file` or `image` validation rule.
  *  It also configures the way that filename should be renamed and stored in database as attribute value. For a basic usage:
  *
  * ```php
@@ -58,7 +58,8 @@ use yii\web\UploadedFile;
  * @author Gabriel A. López López <glpz@daxslab.com>
  * @since 2.0.14
  */
-class UploaderBehavior extends Behavior {
+class UploaderBehavior extends Behavior
+{
 
     /**
      * Renamer mode that defines that final filename will be kept as original.
@@ -87,8 +88,16 @@ class UploaderBehavior extends Behavior {
     const RENAME_RANDOM = 4;
 
     /**
-     * @var string the directory to store uploaded files. You may use path alias here.
-     * If not set, it will use the "uploads" subdirectory under the application public directory.
+     * @var boolean affects the way the UploadedFile instance is created. If true, it will ask the `$owner` model for
+     * the attribute name, most of the times ending in something like `ModelName[attribute_name]`. The contrary is
+     * simply `attribute_name`.
+     */
+    public $useFormName = true;
+
+    /**
+     * @var Closure|string the directory to store uploaded files. You may use path alias here.
+     * If not set, it will use the "uploads" subdirectory under the application public directory. If a callable is
+     * provided, it receives the `$owner` as a parameter and it will be evaluated before every usage.
      */
     public $uploadPath = '@app/web/uploads';
 
@@ -130,8 +139,9 @@ class UploaderBehavior extends Behavior {
      *
      * Checks for a valid configuration
      */
-    public function init() {
-        if(!(is_int($this->renamer) || is_callable($this->renamer))){
+    public function init()
+    {
+        if (!(is_int($this->renamer) || is_callable($this->renamer))) {
             throw new InvalidConfigException('The `renamer` option must be a callable or a valid UploaderBehavior::RENAME_* constant');
         }
 
@@ -152,7 +162,8 @@ class UploaderBehavior extends Behavior {
      * Setups the events and checks the attributes configuration. If no attribute has been set it
      * loads all attributes with `file` validator.
      */
-    public function events() {
+    public function events()
+    {
         if ($this->attributes != null) {
             if (is_array($this->attributes)) {
                 // ok
@@ -167,7 +178,7 @@ class UploaderBehavior extends Behavior {
             $this->attributes = [];
             $rules = $this->owner->rules();
             foreach ($rules as $rule) {
-                if ($rule[1] == 'file' OR $rule[1] == 'image') {
+                if ($rule[1] == 'file' or $rule[1] == 'image') {
                     if (is_array($rule[0])) {
                         $this->attributes = array_merge($this->attributes, $rule[0]);
                     } else {
@@ -186,13 +197,15 @@ class UploaderBehavior extends Behavior {
         ];
     }
 
-    public function doAfterFind() {
+    public function doAfterFind()
+    {
         foreach ($this->attributes as $attr) {
             $this->_oldAttributes[$attr] = $this->owner->$attr;
         }
     }
 
-    public function doBeforeValidate() {
+    public function doBeforeValidate()
+    {
         if (is_array($this->attributes)) {
             foreach ($this->attributes as $attr) {
                 $this->proccessAttribute($attr);
@@ -202,30 +215,37 @@ class UploaderBehavior extends Behavior {
         }
     }
 
-    public function doAfterInsert() {
+    public function doAfterInsert()
+    {
         $this->upload();
     }
 
-    public function doAfterUpdate() {
+    public function doAfterUpdate()
+    {
         $this->upload();
     }
 
-    public function doAfterDelete() {
+    public function doAfterDelete()
+    {
         if ($this->autoDelete) {
             foreach ($this->attributes as $attr) {
-                $filename = Yii::getAlias("{$this->uploadPath}/{$this->owner->$attr}");
-                if (file_exists($filename) AND is_file($filename)) {
+                $uploadPath = $this->getUploadPath();
+                $filename = Yii::getAlias("{$uploadPath}/{$this->owner->$attr}");
+                if (file_exists($filename) and is_file($filename)) {
                     unlink($filename);
                 }
             }
         }
     }
 
-    protected function proccessAttribute($attribute) {
-        $this->owner->$attribute = UploadedFile::getInstance($this->owner, $attribute);
-        $upload = $this->owner->$attribute;
-        if ($upload instanceof UploadedFile) {
-            $upload->name = $this->renameFile($upload->baseName) . "." . $upload->extension;
+    protected function proccessAttribute($attribute)
+    {
+        $this->owner->$attribute = $this->useFormName
+            ? UploadedFile::getInstance($this->owner, $attribute)
+            : UploadedFile::getInstanceByName($attribute);
+
+        if ($this->owner->$attribute instanceof UploadedFile) {
+            $this->owner->$attribute->name = $this->renameFile($this->owner->$attribute->baseName) . "." . $this->owner->$attribute->extension;
         } else {
             if (isset($this->_oldAttributes[$attribute])) {
                 $this->owner->$attribute = $this->_oldAttributes[$attribute];
@@ -233,7 +253,8 @@ class UploaderBehavior extends Behavior {
         }
     }
 
-    protected function renameFile($name) {
+    protected function renameFile($name)
+    {
         $newName = $name;
         if (is_callable($this->renamer)) {
             $newName = call_user_func($this->renamer, $name, $this->owner);
@@ -256,8 +277,9 @@ class UploaderBehavior extends Behavior {
         return $newName;
     }
 
-    protected function upload() {
-        FileHelper::createDirectory(Yii::getAlias($this->uploadPath));
+    protected function upload()
+    {
+        FileHelper::createDirectory(Yii::getAlias($this->getUploadPath()));
         if (is_array($this->attributes)) {
             foreach ($this->attributes as $attr) {
                 $this->uploadFile($attr);
@@ -267,13 +289,17 @@ class UploaderBehavior extends Behavior {
         }
     }
 
-    protected function uploadFile($attribute) {
+    protected function uploadFile($attribute)
+    {
         $upload = $this->owner->$attribute;
         if ($upload instanceof UploadedFile) {
-            if ($upload->saveAs(Yii::getAlias("{$this->uploadPath}/{$upload->name}")) && $this->deleteOldFileOnUpdate) {
+
+            $uploadPath = $this->getUploadPath();
+
+            if ($upload->saveAs(Yii::getAlias("{$uploadPath}/{$upload->name}")) && $this->deleteOldFileOnUpdate) {
                 if ($this->deleteOldFileOnUpdate && !$this->owner->isNewRecord && isset($this->_oldAttributes[$attribute])) {
-                    $filenameToDelete = Yii::getAlias("{$this->uploadPath}/{$this->_oldAttributes[$attribute]}");
-                    if (file_exists($filenameToDelete) AND is_file($filenameToDelete)) {
+                    $filenameToDelete = Yii::getAlias("{$uploadPath}/{$this->_oldAttributes[$attribute]}");
+                    if (file_exists($filenameToDelete) and is_file($filenameToDelete)) {
                         unlink($filenameToDelete);
                     }
                 }
@@ -281,6 +307,13 @@ class UploaderBehavior extends Behavior {
         } else {
             return false;
         }
+    }
+
+    protected function getUploadPath()
+    {
+        return is_callable($this->uploadPath)
+            ? call_user_func($this->uploadPath, $this->owner)
+            : $this->uploadPath;
     }
 
 }
